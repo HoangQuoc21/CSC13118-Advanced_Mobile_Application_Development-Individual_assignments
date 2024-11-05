@@ -1,1 +1,0 @@
-enum TodoDetailMode { add, update }
