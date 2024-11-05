@@ -1,0 +1,4 @@
+enum TodoStatuses {
+  pending,
+  completed,
+}
