@@ -4,9 +4,11 @@ class MySearchBar extends StatefulWidget {
   const MySearchBar({
     super.key,
     required this.controller,
+    this.hintText = 'Search',
   });
 
   final TextEditingController controller;
+  final String hintText;
 
   @override
   MySearchBarState createState() => MySearchBarState();
@@ -64,7 +66,7 @@ class MySearchBarState extends State<MySearchBar> {
         focusNode: _focusNode,
         textAlignVertical: TextAlignVertical.center,
         decoration: InputDecoration(
-          hintText: 'Search',
+          hintText: widget.hintText,
           alignLabelWithHint: true,
           border: InputBorder.none,
           icon: Icon(

@@ -37,7 +37,10 @@ class _SearchPageState extends State<SearchPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            MySearchBar(controller: _searchTextController),
+            MySearchBar(
+              controller: _searchTextController,
+              hintText: 'Enter the task title',
+            ),
             const Gap(16),
             Expanded(
               child: TodoList(
