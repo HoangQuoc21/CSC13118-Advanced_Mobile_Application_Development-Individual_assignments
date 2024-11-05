@@ -7,11 +7,15 @@ import 'package:todo_list/models/models.dart';
 class TodoListItem extends StatefulWidget {
   final Todo todo;
   final Function(Todo) onToggleStatus;
+  final Function(String id) onDismissed;
+  final bool isDisable; // Add a flag to control dismissible behavior
 
   const TodoListItem({
     super.key,
     required this.todo,
     required this.onToggleStatus,
+    required this.onDismissed,
+    this.isDisable = false, // Default to true
   });
 
   @override
@@ -19,18 +23,23 @@ class TodoListItem extends StatefulWidget {
 }
 
 class TodoListItemState extends State<TodoListItem> {
-
   @override
   Widget build(BuildContext context) {
-    return TouchableOpacity(
+    final content = TouchableOpacity(
       activeOpacity: 0.5,
       onTap: () => TodoDetailModal.showDetail(context, widget.todo),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.grey[100],
+          color: widget.todo.isDue
+              ? Theme.of(context).colorScheme.errorContainer
+              : Theme.of(context).colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(
+            color: widget.todo.isDue
+                ? Theme.of(context).colorScheme.error
+                : Theme.of(context).colorScheme.primary,
+          ),
         ),
         child: Row(
           children: [
@@ -39,12 +48,16 @@ class TodoListItemState extends State<TodoListItem> {
               child: widget.todo.isDone
                   ? Icon(
                       Icons.check_circle,
-                      color: Theme.of(context).primaryColor,
+                      color: widget.todo.isDue
+                          ? Theme.of(context).colorScheme.error
+                          : Theme.of(context).colorScheme.primary,
                       size: 24,
                     )
                   : Icon(
                       Icons.radio_button_unchecked,
-                      color: Colors.grey,
+                      color: widget.todo.isDue
+                          ? Theme.of(context).colorScheme.error
+                          : Theme.of(context).colorScheme.primary,
                       size: 24,
                     ),
             ),
@@ -58,14 +71,18 @@ class TodoListItemState extends State<TodoListItem> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: widget.todo.isDue
+                          ? Theme.of(context).colorScheme.error
+                          : Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   Text(
                     widget.todo.description,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.black54,
+                      color: widget.todo.isDue
+                          ? Theme.of(context).colorScheme.error
+                          : Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ],
@@ -103,5 +120,16 @@ class TodoListItemState extends State<TodoListItem> {
         ),
       ),
     );
+
+    return widget.isDisable
+        ? Dismissible(
+            key: Key(widget.todo.id),
+            onDismissed: (direction) {
+              widget.onDismissed(widget.todo.id);
+            },
+            movementDuration: Duration.zero,
+            child: content,
+          )
+        : content;
   }
 }

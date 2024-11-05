@@ -62,7 +62,8 @@ class _TasksPageState extends State<TasksPage> {
                 child: TodoList(
                   category: selectedCategory,
                   status: TodoStatuses.pending,
-                  emptyText: "No tasks available",
+                  emptyText: "No available tasks",
+                  allowDelete: true,
                 ),
               ),
             ],

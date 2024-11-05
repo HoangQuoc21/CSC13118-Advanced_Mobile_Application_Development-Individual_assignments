@@ -31,7 +31,7 @@ class LocalStorageService {
     });
   }
 
-  Future<void> saveTodoToDatabase(Todo todo) async {
+  Future<void> addTodoToDatabase(Todo todo) async {
     await _database.insert(
       'todos',
       todo.toMap(),
@@ -39,6 +39,16 @@ class LocalStorageService {
     );
   }
 
+  // update todo 
+  Future<void> updateTodoInDatabase(Todo todo) async {
+    await _database.update(
+      'todos',
+      todo.toMap(),
+      where: "id = ?",
+      whereArgs: [todo.id],
+    );
+  }
+  
   Future<void> deleteTodoFromDatabase(String id) async {
     await _database.delete(
       'todos',

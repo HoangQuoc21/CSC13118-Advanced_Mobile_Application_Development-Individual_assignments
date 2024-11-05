@@ -19,11 +19,16 @@ class TodoProvider with ChangeNotifier {
 
   Future<void> _loadTodos() async {
     _todos = await _localStorageService.loadTodos();
-    notifyListeners();
+    notifyListeners(); 
   }
 
-  Future<void> _saveTodoToDatabase(Todo todo) async {
-    await _localStorageService.saveTodoToDatabase(todo);
+  Future<void> _addTodoToDatabase(Todo todo) async {
+    await _localStorageService.addTodoToDatabase(todo);
+  }
+
+  // update todo
+  Future<void> _updateTodoInDatabase(Todo todo) async {
+    await _localStorageService.updateTodoInDatabase(todo);
   }
 
   Future<void> _deleteTodoFromDatabase(String id) async {
@@ -32,7 +37,7 @@ class TodoProvider with ChangeNotifier {
 
   void addTodo(Todo todo) {
     _todos.add(todo);
-    _saveTodoToDatabase(todo);
+    _addTodoToDatabase(todo);
     notifyListeners();
   }
 
@@ -40,7 +45,7 @@ class TodoProvider with ChangeNotifier {
     int index = _todos.indexWhere((t) => t.id == todo.id);
     if (index != -1) {
       _todos[index] = todo;
-      _saveTodoToDatabase(todo);
+      _updateTodoInDatabase(todo);
       notifyListeners();
     }
   }

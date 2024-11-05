@@ -1,8 +1,4 @@
-import 'package:uuid/uuid.dart';
 import 'package:todo_list/constants/constants.dart';
-
-// Generate a v4 (random) UUID
-const uuid = Uuid();
 
 class Todo {
   final String id;
@@ -12,14 +8,6 @@ class Todo {
   TodoStatuses status;
 
   Todo({
-    required this.title,
-    required this.description,
-    required this.status,
-    this.dueTime,
-  }) : id = uuid.v4();
-
-  // constructor with id
-  Todo.withId({
     required this.id,
     required this.title,
     required this.description,
@@ -27,20 +15,15 @@ class Todo {
     this.dueTime,
   });
 
-  Todo.empty()
-      : id = '',
-        title = '',
-        description = '',
-        status = TodoStatuses.pending,
-        dueTime = null;
-
   Todo copyWith({
+    String? id,
     String? title,
     String? description,
     DateTime? dueTime,
     TodoStatuses? status,
   }) {
     return Todo(
+      id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
       status: status ?? this.status,
@@ -54,10 +37,12 @@ class Todo {
   TodoCategories get category {
     var category = TodoCategories.all;
     if (dueTime != null) {
-      if (dueTime!.isBefore(DateTime.now().add(Duration(days: 1))) &&
-          dueTime!.isAfter(DateTime.now())) {
+      var now = DateTime.now();
+      var start = DateTime(now.year, now.month, now.day);
+      var end = DateTime(now.year, now.month, now.day, 23, 59);
+      if (dueTime!.isAfter(start) && dueTime!.isBefore(end)) {
         category = TodoCategories.today;
-      } else if (dueTime!.isAfter(DateTime.now())) {
+      } else if (dueTime!.isAfter(end)) {
         category = TodoCategories.upcoming;
       }
     }
@@ -73,6 +58,7 @@ class Todo {
       };
 
   factory Todo.fromJson(Map<String, dynamic> json) => Todo(
+        id: json['id'],
         title: json['title'],
         description: json['description'],
         status: TodoStatuses.values
@@ -95,6 +81,7 @@ class Todo {
   // Extract a Todo object from a Map.
   factory Todo.fromMap(Map<String, dynamic> map) {
     return Todo(
+      id: map['id'],
       title: map['title'],
       description: map['description'],
       status: TodoStatuses

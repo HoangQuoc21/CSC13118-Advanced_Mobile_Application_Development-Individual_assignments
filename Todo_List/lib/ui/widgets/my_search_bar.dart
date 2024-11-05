@@ -49,12 +49,14 @@ class MySearchBarState extends State<MySearchBar> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: _isFocused ? Colors.transparent : Colors.grey[200],
+        color: _isFocused
+            ? Theme.of(context).colorScheme.surfaceContainerLowest
+            : Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: _isFocused
               ? Theme.of(context).primaryColor
-              : (Colors.grey[300] ?? Colors.grey),
+              : Theme.of(context).colorScheme.surface,
         ),
       ),
       child: TextField(
@@ -65,15 +67,18 @@ class MySearchBarState extends State<MySearchBar> {
           hintText: 'Search',
           alignLabelWithHint: true,
           border: InputBorder.none,
-          icon: Icon(Icons.search),
-          contentPadding:
-              EdgeInsets.symmetric(vertical: 12), // Adjust this value as needed
+          icon: Icon(
+            Icons.search,
+            color: Theme.of(context).primaryColor,
+          ),
+          contentPadding: EdgeInsets.symmetric(vertical: 12),
           suffixIcon: _showClearIcon
               ? IconButton(
                   icon: Icon(Icons.cancel),
                   onPressed: () {
                     widget.controller.clear();
                   },
+                  color: Theme.of(context).colorScheme.primary,
                 )
               : null,
         ),

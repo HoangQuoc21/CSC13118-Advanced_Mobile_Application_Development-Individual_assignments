@@ -7,17 +7,21 @@ import 'package:todo_list/constants/constants.dart';
 import 'package:gap/gap.dart';
 
 class TodoList extends StatefulWidget {
-  const TodoList(
-      {required this.category,
-      required this.status,
-      required this.emptyText,
-      this.searchText,
-      super.key});
-
   final TodoCategories category;
-  final TodoStatuses status;
+  final TodoStatuses? status;
   final String emptyText;
   final String? searchText;
+  final bool allowDelete;
+
+  const TodoList({
+    required this.category,
+    this.status,
+    required this.emptyText,
+    this.searchText,
+    this.allowDelete = false,
+    super.key,
+  });
+
   @override
   State<TodoList> createState() => _TodoListState();
 }
@@ -25,6 +29,7 @@ class TodoList extends StatefulWidget {
 class _TodoListState extends State<TodoList> {
   List<Todo> _filterTodos(List<Todo> todos) {
     List<Todo> result = [];
+
     switch (widget.category) {
       case TodoCategories.all:
         result = todos;
@@ -36,13 +41,15 @@ class _TodoListState extends State<TodoList> {
         break;
     }
 
-    switch (widget.status) {
-      case TodoStatuses.pending:
-        result = result.where((todo) => !todo.isDone).toList();
-        break;
-      case TodoStatuses.completed:
-        result = result.where((todo) => todo.isDone).toList();
-        break;
+    if (widget.status != null) {
+      switch (widget.status!) {
+        case TodoStatuses.pending:
+          result = result.where((todo) => !todo.isDone).toList();
+          break;
+        case TodoStatuses.completed:
+          result = result.where((todo) => todo.isDone).toList();
+          break;
+      }
     }
 
     if (widget.searchText != null && widget.searchText!.isNotEmpty) {
@@ -64,6 +71,16 @@ class _TodoListState extends State<TodoList> {
     todoProvider.updateTodo(updatedTodo);
   }
 
+  onItemDismissed(String id) {
+    final todoProvider = Provider.of<TodoProvider>(context, listen: false);
+    todoProvider.deleteTodo(id);
+
+    // show snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Todo deleted successfully!")),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<TodoProvider>(
@@ -75,9 +92,13 @@ class _TodoListState extends State<TodoList> {
                 itemBuilder: (context, index) {
                   final todo = filteredTodos[index];
                   return TodoListItem(
+                    isDisable: widget.allowDelete,
                     todo: todo,
                     onToggleStatus: (todo) {
                       onToggleStatusDone(todo);
+                    },
+                    onDismissed: (id) {
+                      widget.allowDelete && onItemDismissed(id);
                     },
                   );
                 },

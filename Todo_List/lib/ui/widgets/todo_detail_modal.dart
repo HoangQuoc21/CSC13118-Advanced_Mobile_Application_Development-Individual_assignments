@@ -88,7 +88,7 @@ class TodoDetailModalState extends State<TodoDetailModal> {
     }
   }
 
-  void _saveTodo() {
+  void _addTodo() {
     if (_titleController.text.isEmpty ||
         _descriptionController.text.isEmpty ||
         _selectedDate == null) {
@@ -109,6 +109,7 @@ class TodoDetailModalState extends State<TodoDetailModal> {
     }
 
     final newTodo = Todo(
+      id: DateTime.now().toString(),
       title: _titleController.text,
       description: _descriptionController.text,
       status: TodoStatuses.pending,
@@ -144,7 +145,7 @@ class TodoDetailModalState extends State<TodoDetailModal> {
       return;
     }
 
-    final updatedTodo = Todo.withId(
+    final updatedTodo = Todo(
       id: widget.todo!.id,
       title: _titleController.text,
       description: _descriptionController.text,
@@ -233,7 +234,7 @@ class TodoDetailModalState extends State<TodoDetailModal> {
                   widget.todo?.isDone == false)
                 ElevatedButton(
                   onPressed: widget.mode == TodoDetailMode.add
-                      ? _saveTodo
+                      ? _addTodo
                       : _updateTodo,
                   style: ElevatedButton.styleFrom(
                     backgroundColor:

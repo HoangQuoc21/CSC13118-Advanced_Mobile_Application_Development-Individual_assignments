@@ -19,7 +19,10 @@ class CategoryButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: isSelected
               ? Theme.of(context).buttonTheme.colorScheme?.primary
-              : Colors.grey.shade200,
+              : Theme.of(context)
+                  .buttonTheme
+                  .colorScheme
+                  ?.surfaceContainerLowest,
           foregroundColor: isSelected ? Colors.white : Colors.grey.shade800,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
