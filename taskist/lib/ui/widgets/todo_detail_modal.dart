@@ -4,6 +4,7 @@ import 'package:taskist/utils/utils.dart';
 import 'package:taskist/models/models.dart';
 import 'package:taskist/constants/constants.dart';
 import 'package:taskist/providers/todo_provider.dart';
+import 'package:taskist/services/notification_services.dart';
 
 enum TodoDetailMode { add, update }
 
@@ -48,6 +49,7 @@ class TodoDetailModalState extends State<TodoDetailModal> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   DateTime? _selectedDate;
+  final NotificationService _notificationService = NotificationService();
 
   @override
   void dispose() {
@@ -109,7 +111,9 @@ class TodoDetailModalState extends State<TodoDetailModal> {
     }
 
     final newTodo = Todo(
-      id: DateTime.now().toString(),
+      id: DateTime.now()
+          .millisecondsSinceEpoch
+          .toString(), // The current timestamp in microseconds
       title: _titleController.text,
       description: _descriptionController.text,
       status: TodoStatuses.pending,
@@ -117,6 +121,15 @@ class TodoDetailModalState extends State<TodoDetailModal> {
     );
 
     Provider.of<TodoProvider>(context, listen: false).addTodo(newTodo);
+
+    // If DueTime is not null then ask for permission then Schedule notification
+
+    if (newTodo.dueTime != null) {
+      int notificationId = newTodo.id.hashCode &
+          0x7FFFFFFF; // Ensure the ID is within 32-bit integer range
+      _notificationService.scheduleNotification(
+          notificationId, newTodo.title, newTodo.dueTime!);
+    }
 
     Navigator.of(context).pop();
 
@@ -154,6 +167,13 @@ class TodoDetailModalState extends State<TodoDetailModal> {
     );
 
     Provider.of<TodoProvider>(context, listen: false).updateTodo(updatedTodo);
+
+    if (updatedTodo.dueTime != null) {
+      int notificationId = updatedTodo.id.hashCode &
+          0x7FFFFFFF; // Ensure the ID is within 32-bit integer range
+      _notificationService.scheduleNotification(
+          notificationId, updatedTodo.title, updatedTodo.dueTime!);
+    }
 
     Navigator.of(context).pop();
 
