@@ -17,6 +17,7 @@ class CompletedPage extends StatelessWidget {
                 category: TodoCategories.all,
                 status: TodoStatuses.completed,
                 emptyText: 'No completed tasks',
+                allowDelete: true,
               ),
             ),
           ],

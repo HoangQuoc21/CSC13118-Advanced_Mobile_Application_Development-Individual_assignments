@@ -98,7 +98,9 @@ class _TodoListState extends State<TodoList> {
                       onToggleStatusDone(todo);
                     },
                     onDismissed: (id) {
-                      widget.allowDelete && onItemDismissed(id);
+                      if (widget.allowDelete) {
+                        onItemDismissed(id);
+                      }
                     },
                   );
                 },
