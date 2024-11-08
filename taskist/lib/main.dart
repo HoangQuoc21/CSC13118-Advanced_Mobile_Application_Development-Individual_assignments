@@ -14,6 +14,7 @@ void main() async {
 
   // Request NOTIFICATION permission
   await requestNotificationPermission();
+  await requestExactAlarmPermission();
 
   // Initialize NotificationService
   final NotificationService notificationService = NotificationService();
